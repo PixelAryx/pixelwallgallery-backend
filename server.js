@@ -8,6 +8,9 @@ const path = require('path');
 dotenv.config();
 const app = express();
 
+app.get("/", (req, res) => {
+  res.send("PixelWallGallery backend is live 🚀");
+});
 // Middleware
 app.use(cors()); // CORS allow frontend requests
 app.use(express.json());
