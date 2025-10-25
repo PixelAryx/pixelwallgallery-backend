@@ -2,38 +2,39 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const wallpaperRoutes = require('./routes/wallpaperRoutes');
 const path = require('path');
+const wallpaperRoutes = require('./routes/wallpaperRoutes');
+const feedbackRoutes = require('./routes/feedbackRoutes');
 
 dotenv.config();
 const app = express();
 
+// ✅ Middleware setup
+app.use(cors({
+  origin: "https://pixelwallgallery.onrender.com",
+  credentials: true
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ✅ Serve static uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// ✅ Routes
 app.get("/", (req, res) => {
   res.send("PixelWallGallery backend is live 🚀");
 });
-// Middleware
-app.use(cors({
-  origin: "https://pixelwallgallery.onrender.com", // frontend URL
-  credentials: true
-})); // CORS allow frontend requests
-app.use(express.json());
-
-//FeedBack
-const feedbackRoutes = require('./routes/feedbackRoutes');
+app.use('/api/wallpapers', wallpaperRoutes);
 app.use('/api/feedback', feedbackRoutes);
 
-
-// Serve uploads folder
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// API routes
-app.use('/api/wallpapers', wallpaperRoutes);
-
-// MongoDB connection
-mongoose.connect(process.env.MONGO_URI)
+// ✅ MongoDB connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// Start server
+// ✅ Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
