@@ -12,7 +12,10 @@ app.get("/", (req, res) => {
   res.send("PixelWallGallery backend is live 🚀");
 });
 // Middleware
-app.use(cors()); // CORS allow frontend requests
+app.use(cors({
+  origin: "https://pixelwallgallery.onrender.com", // frontend URL
+  credentials: true
+})); // CORS allow frontend requests
 app.use(express.json());
 
 //FeedBack
